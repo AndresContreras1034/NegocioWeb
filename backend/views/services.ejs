@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= titulo %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Custom CSS for additional styling -->
+  <style>
+    .services-section {
+      background: url('https://source.unsplash.com/random/1600x900') no-repeat center center;
+      background-size: cover;
+      color: white;
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+    .services-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    .services-section h1, .services-section p {
+      position: relative;
+      z-index: 2;
+    }
+    .service-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .service-card .card-body {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+    }
+    .service-card .card-body h5, .service-card .card-body p {
+      color: white;
+    }
+    .testimonial-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .testimonial-card .card-body {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+    }
+    .testimonial-card .card-body h5, .testimonial-card .card-body p {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="/">NegocioWeb</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about">Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="/services">Servicios</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contacto</a></li>
+        <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/carrito">Carrito 🛒</a></li>
+        <% if (usuario && usuario.rol === 'admin') { %>
+          <li class="nav-item"><a class="nav-link" href="/categorias">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
+        <% } %>
+      </ul>
+      <% if (usuario) { %>
+        <div class="d-flex align-items-center text-white me-3">
+          <span class="me-1">👋 Hola,</span>
+          <strong><%= usuario.nombre %></strong>
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/panel">Panel</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Cerrar sesión</a></li>
+        </ul>
+      <% } else { %>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/login">Iniciar sesión</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register">Registrarse</a></li>
+        </ul>
+      <% } %>
+    </div>
+  </nav>
+
+  <main class="container mt-4">
+    <section class="services-section">
+      <div class="container">
+        <h1>Servicios</h1>
+        <p>Ofrecemos una variedad de servicios para ayudarte a gestionar tu negocio de manera eficiente.</p>
+      </div>
+    </section>
+
+    <section class="my-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card service-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-box-seam display-4 text-primary"></i>
+                <h5 class="card-title mt-3">Gestión de Productos</h5>
+                <p class="card-text">Registra, edita y elimina productos fácilmente con subida de imágenes y categorías.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card service-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-people display-4 text-success"></i>
+                <h5 class="card-title mt-3">Control de Usuarios</h5>
+                <p class="card-text">Permite la creación de usuarios con distintos roles (cliente, administrador) y su gestión desde el panel.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card service-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-bar-chart-line display-4 text-warning"></i>
+                <h5 class="card-title mt-3">Panel de Administración</h5>
+                <p class="card-text">Accede a estadísticas clave como conteo de usuarios, productos, categorías y promedio de precios.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="my-5">
+      <div class="container">
+        <h2 class="text-center mb-5">Testimonios</h2>
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-chat-quote display-4 text-info"></i>
+                <p class="card-text mt-3">"NegocioWeb ha transformado la forma en que gestionamos nuestros productos. ¡Altamente recomendado!"</p>
+                <h5 class="card-title mt-3">Juan Pérez</h5>
+                <p class="card-text">Gerente de Ventas</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-chat-quote display-4 text-info"></i>
+                <p class="card-text mt-3">"La interfaz es intuitiva y fácil de usar. Hemos visto un aumento en la eficiencia desde que comenzamos a usar NegocioWeb."</p>
+                <h5 class="card-title mt-3">María López</h5>
+                <p class="card-text">Directora de Operaciones</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+              <div class="card-body text-center">
+                <i class="bi bi-chat-quote display-4 text-info"></i>
+                <p class="card-text mt-3">"El soporte al cliente es excepcional. Siempre están dispuestos a ayudar y resolver cualquier problema rápidamente."</p>
+                <h5 class="card-title mt-3">Carlos García</h5>
+                <p class="card-text">CEO</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-dark text-white text-center py-3 mt-5">
+    <p class="mb-0">© <%= new Date().getFullYear() %> NegocioWeb. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Bootstrap JS with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS for animations -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const serviceCards = document.querySelectorAll('.service-card');
+      serviceCards.forEach(card => {
+        card.classList.add('animate__animated', 'animate__fadeInUp');
+      });
+      const testimonialCards = document.querySelectorAll('.testimonial-card');
+      testimonialCards.forEach(card => {
+        card.classList.add('animate__animated', 'animate__fadeInUp');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+const express = require('express');
+const router = express.Router();
+const Usuario = require('../models/Usuario');
+const Producto = require('../models/Producto');
+const Categoria = require('../models/Categoria');
+const { verificarToken, soloAdmin } = require('../middlewares/authMiddleware');
+
+router.get('/admin', verificarToken, soloAdmin, async (req, res) => {
+  try {
+    const totalUsuarios = await Usuario.countDocuments();
+    const totalProductos = await Producto.countDocuments();
+    const totalCategorias = await Categoria.countDocuments();
+
+    const adminCount = await Usuario.countDocuments({ rol: 'admin' });
+    const clienteCount = await Usuario.countDocuments({ rol: 'cliente' });
+
+    const promedioPrecio = await Producto.aggregate([
+      { $group: { _id: null, promedio: { $avg: "$precio" } } }
+    ]);
+
+    res.render('panel/admin', {
+      titulo: 'Panel de Administración',
+      totalUsuarios,
+      totalProductos,
+      totalCategorias,
+      adminCount,
+      clienteCount,
+      promedioPrecio: promedioPrecio[0]?.promedio?.toFixed(2) || '0.00'
+    });
+
+  } catch (error) {
+    console.error('Error en estadísticas:', error);
+    res.redirect('/');
+  }
+});
+
+module.exports = router;

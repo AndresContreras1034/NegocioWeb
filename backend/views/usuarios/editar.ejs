@@ -1,0 +1,51 @@
+<%- include('../partials/header', { titulo }) %>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+  <h1 class="mb-4 text-center text-primary fw-bold">Usuarios Registrados</h1>
+
+  <% if (usuarios.length === 0) { %>
+    <div class="alert alert-info text-center">No hay usuarios registrados aún.</div>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle shadow-sm rounded overflow-hidden">
+        <thead class="table-primary text-center">
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach(user => { %>
+            <tr>
+              <td><%= user.nombre %></td>
+              <td><%= user.correo %></td>
+              <td>
+                <form action="/usuarios/cambiar-rol/<%= user._id %>" method="POST" class="d-inline">
+                  <select name="rol" onchange="this.form.submit()" class="form-select form-select-sm">
+                    <option value="cliente" <%= user.rol === 'cliente' ? 'selected' : '' %>>Cliente</option>
+                    <option value="admin" <%= user.rol === 'admin' ? 'selected' : '' %>>Admin</option>
+                  </select>
+                </form>
+              </td>
+              <td class="text-center">
+                <form action="/usuarios/eliminar/<%= user._id %>" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este usuario?')" title="Eliminar usuario">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<%- include('../partials/footer') %>
+

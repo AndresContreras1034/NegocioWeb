@@ -1,0 +1,31 @@
+<%- include('../partials/header', { titulo }) %>
+
+<div class="container mt-4">
+  <h1 class="mb-4">Categorías</h1>
+
+  <% if (usuario && usuario.rol === 'admin') { %>
+    <a href="/categorias/nueva" class="btn btn-success mb-3">➕ Nueva categoría</a>
+  <% } %>
+
+  <% if (categorias.length === 0) { %>
+    <div class="alert alert-info">No hay categorías registradas.</div>
+  <% } else { %>
+    <ul class="list-group">
+      <% categorias.forEach(cat => { %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span><strong><%= cat.nombre %></strong></span>
+          <% if (usuario && usuario.rol === 'admin') { %>
+            <div>
+              <a href="/categorias/editar/<%= cat._id %>" class="btn btn-sm btn-warning me-2">✏️ Editar</a>
+              <form action="/categorias/eliminar/<%= cat._id %>" method="POST" class="d-inline">
+                <button onclick="return confirm('¿Eliminar esta categoría?')" type="submit" class="btn btn-sm btn-danger">🗑️</button>
+              </form>
+            </div>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

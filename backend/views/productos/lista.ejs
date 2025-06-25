@@ -1,0 +1,42 @@
+<%- include('../partials/header', { titulo: titulo }) %>
+
+<h1 class="mb-4">Lista de Productos</h1>
+
+<% if (usuario && usuario.rol === 'admin') { %>
+  <p><a href="/productos/nuevo" class="btn btn-success">➕ Agregar nuevo producto</a></p>
+<% } %>
+
+<% if (productos.length === 0) { %>
+  <div class="alert alert-warning">No hay productos registrados aún.</div>
+<% } else { %>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    <% productos.forEach(p => { %>
+      <div class="col">
+        <div class="card h-100">
+          <% if (p.imagen) { %>
+            <img src="<%= p.imagen %>" class="card-img-top" alt="imagen de <%= p.nombre %>" style="max-height: 200px; object-fit: cover;">
+          <% } %>
+
+          <div class="card-body">
+            <h5 class="card-title"><%= p.nombre %></h5>
+            <p class="card-text"><%= p.descripcion %></p>
+            <p class="card-text"><strong>Precio:</strong> $<%= p.precio.toFixed(2) %></p>
+            <% if (p.categoria) { %>
+              <p class="card-text"><strong>Categoría:</strong> <%= p.categoria.nombre %></p>
+            <% } %>
+
+            <% if (usuario && usuario.rol === 'admin') { %>
+              <a href="/productos/editar/<%= p._id %>" class="btn btn-sm btn-primary">✏️ Editar</a>
+              <form action="/productos/eliminar/<%= p._id %>" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este producto?')">🗑️ Eliminar</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>
+

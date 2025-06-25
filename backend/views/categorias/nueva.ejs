@@ -1,0 +1,16 @@
+<%- include('../partials/header', { titulo }) %>
+
+<h1>Crear nueva categoría</h1>
+
+<% if (error) { %>
+  <p style="color:red;"><%= error %></p>
+<% } %>
+
+<form action="/categorias/nueva" method="POST">
+  <label>Nombre:</label>
+  <input type="text" name="nombre" required>
+  <br><br>
+  <button type="submit">Guardar</button>
+</form>
+
+<%- include('../partials/footer') %>

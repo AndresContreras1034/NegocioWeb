@@ -1,0 +1,33 @@
+
+<%- include('partials/header', { titulo: titulo }) %>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+    <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+    <form action="/login" method="POST" novalidate>
+      <div class="mb-3">
+        <label for="correo" class="form-label">Correo</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input type="email" class="form-control" id="correo" name="correo" required>
+          <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="contraseña" class="form-label">Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+          <div class="invalid-feedback">Por favor, ingresa tu contraseña.</div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+      <% if (error) { %>
+        <div class="alert alert-danger mt-3"><%= error %></div>
+      <% } %>
+    </form>
+    <p class="text-center mt-3">¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

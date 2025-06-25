@@ -1,0 +1,39 @@
+<%- include('../partials/header', { titulo: titulo }) %>
+
+<h1 class="mb-4">Agregar Producto</h1>
+
+<form action="/productos/nuevo" method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+  <div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Descripción</label>
+    <textarea name="descripcion" class="form-control" rows="3"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Precio</label>
+    <input type="number" step="0.01" name="precio" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Categoría</label>
+    <select name="categoria" class="form-select" required>
+      <option value="">Seleccione una categoría</option>
+      <% categorias.forEach(c => { %>
+        <option value="<%= c._id %>"><%= c.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Imagen</label>
+    <input type="file" name="imagen" class="form-control" accept="image/*">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+<%- include('../partials/footer') %>

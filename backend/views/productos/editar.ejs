@@ -1,0 +1,38 @@
+<%- include('../partials/header', { titulo: titulo }) %>
+
+<h1 class="mb-4">Editar Producto</h1>
+
+<form action="/productos/editar/<%= producto._id %>" method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+  <div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" class="form-control" value="<%= producto.nombre %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Descripción</label>
+    <textarea name="descripcion" class="form-control" rows="3"><%= producto.descripcion %></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Precio</label>
+    <input type="number" step="0.01" name="precio" class="form-control" value="<%= producto.precio %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Imagen actual:</label><br>
+    <% if (producto.imagen) { %>
+      <img src="<%= producto.imagen %>" alt="imagen" style="max-width: 200px;">
+    <% } else { %>
+      <em>Sin imagen</em>
+    <% } %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Nueva imagen</label>
+    <input type="file" name="imagen" class="form-control" accept="image/*">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+
+<%- include('../partials/footer') %>
