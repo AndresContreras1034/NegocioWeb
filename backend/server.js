@@ -1,27 +1,29 @@
-// Cargar variables de entorno desde .env (con ruta explícita)
+// 🌱 Load environment variables from .env (with explicit path)
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-// Mostrar valor de MONGO_URI para depuración
-console.log("🔍 MONGO_URI cargado:", process.env.MONGO_URI);
+// 🔍 Log MONGO_URI for debugging purposes
+console.log("🔍 Loaded MONGO_URI:", process.env.MONGO_URI);
 
-// Dependencias
+// 📦 Dependencies
 const mongoose = require('mongoose');
-const app = require('./app');
+const app = require('./app'); // Express app
 
-// Conexión a MongoDB
+// 🔗 Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => {
-  console.log('✅ Conectado a MongoDB');
+  console.log('✅ Connected to MongoDB');
+
+  // Start the server once the database is ready
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
   });
 })
 .catch(err => {
-  console.error('❌ Error al conectar a MongoDB:', err);
+  console.error('❌ Failed to connect to MongoDB:', err);
 });
