@@ -1,89 +1,65 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const Usuario = require('../models/Usuario');
-const { verificarToken } = require('../middlewares/authMiddleware');
-
-// FORMULARIO DE REGISTRO
-router.get('/register', (req, res) => {
-  res.render('register', { titulo: 'Registro', error: null });
-});
-
-// PROCESAR REGISTRO
-router.post('/register', async (req, res) => {
-  const { nombre, correo, contraseña } = req.body;
-
-  try {
-    const usuarioExistente = await Usuario.findOne({ correo });
-    if (usuarioExistente) {
-      return res.render('register', { titulo: 'Registro', error: 'El correo ya está registrado.' });
-    }
-
-    const hash = await bcrypt.hash(contraseña, 10);
-    const nuevoUsuario = new Usuario({ nombre, correo, contraseña: hash });
-    await nuevoUsuario.save();
-
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Error en el registro:', error);
-    res.render('register', { titulo: 'Registro', error: 'Error en el registro.' });
-  }
-});
-
-// FORMULARIO DE LOGIN
+// LOGIN FORM
 router.get('/login', (req, res) => {
-  res.render('login', { titulo: 'Iniciar Sesión', error: null });
+  // Render the login view with a title and no error initially
+  res.render('login', { titulo: 'Log In', error: null });
 });
 
-// PROCESAR LOGIN
+// PROCESS LOGIN
 router.post('/login', async (req, res) => {
-  const { correo, contraseña } = req.body;
+  const { correo, contraseña } = req.body; // Extract email and password from form
 
   try {
+    // Look for a user with the provided email
     const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
-      return res.render('login', { titulo: 'Iniciar Sesión', error: 'Correo no registrado.' });
+      // If user is not found, show an error
+      return res.render('login', { titulo: 'Log In', error: 'Email not registered.' });
     }
 
+    // Compare the provided password with the hashed password in the DB
     const esValida = await bcrypt.compare(contraseña, usuario.contraseña);
     if (!esValida) {
-      return res.render('login', { titulo: 'Iniciar Sesión', error: 'Contraseña incorrecta.' });
+      // If password is incorrect, show an error
+      return res.render('login', { titulo: 'Log In', error: 'Incorrect password.' });
     }
 
-    // Incluye nombre y rol en el token para poder usarlo en el header
+    // Generate a JWT token including user ID, name, and role
     const token = jwt.sign(
       { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1h' } // Token expires in 1 hour
     );
 
+    // Store the token in a cookie
     res.cookie('token', token, { httpOnly: true });
-    res.redirect('/panel');
+    res.redirect('/panel'); // Redirect to user dashboard
   } catch (error) {
-    console.error('Error en login:', error);
-    res.render('login', { titulo: 'Iniciar Sesión', error: 'Error al iniciar sesión.' });
+    console.error('Login error:', error);
+    res.render('login', { titulo: 'Log In', error: 'Error during login.' });
   }
 });
 
-// PANEL DE USUARIO (PROTEGIDO)
+// USER PANEL (PROTECTED ROUTE)
 router.get('/panel', verificarToken, async (req, res) => {
   try {
+    // Retrieve full user info from DB using ID from token
     const usuario = await Usuario.findById(req.usuario.id).lean();
-    if (!usuario) return res.redirect('/login');
+    if (!usuario) return res.redirect('/login'); // If not found, redirect to login
 
+    // Render the user dashboard with user data
     res.render('panel', {
-      titulo: 'Panel de Usuario',
+      titulo: 'User Panel',
       usuario
     });
   } catch (error) {
-    console.error('Error al cargar el panel:', error);
+    console.error('Error loading panel:', error);
     res.redirect('/login');
   }
 });
 
-// CERRAR SESIÓN
+// LOGOUT
 router.get('/logout', (req, res) => {
+  // Clear the token cookie and redirect to login
   res.clearCookie('token');
   res.redirect('/login');
 });
