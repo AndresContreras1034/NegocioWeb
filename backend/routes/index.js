@@ -1,83 +1,89 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const Producto = require('../models/Producto'); // Modelo de productos
+const Producto = require('../models/Producto'); // Product model
 
-// Página de inicio
+// HOME PAGE
 router.get('/', (req, res) => {
-  res.render('index', { titulo: 'Inicio - Negocio' });
+  res.render('index', { titulo: 'Home - Business' });
 });
 
-// Nosotros
+// ABOUT US PAGE
 router.get('/about', (req, res) => {
-  res.render('about', { titulo: 'Sobre Nosotros' });
+  res.render('about', { titulo: 'About Us' });
 });
 
-// Servicios
+// SERVICES PAGE
 router.get('/services', (req, res) => {
-  res.render('services', { titulo: 'Servicios' });
+  res.render('services', { titulo: 'Services' });
 });
 
-// Contacto (GET)
+// CONTACT FORM (GET)
 router.get('/contact', (req, res) => {
   res.render('contact', {
-    titulo: 'Contáctanos',
+    titulo: 'Contact Us',
     mensaje: null
   });
 });
 
-// Contacto (POST)
+// CONTACT FORM (POST) - Send email
 router.post('/contact', async (req, res) => {
   const { nombre, email, mensaje } = req.body;
 
   try {
+    // Configure the email transport using Gmail and credentials from .env
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER, // Your email address
+        pass: process.env.EMAIL_PASS  // Your email password or app-specific password
       }
     });
 
+    // Set up the email content
     const mailOptions = {
-      from: email,
-      to: process.env.EMAIL_USER,
-      subject: `Nuevo mensaje de ${nombre}`,
-      text: `Correo: ${email}\n\nMensaje:\n${mensaje}`
+      from: email, // Sender's email
+      to: process.env.EMAIL_USER, // Your email to receive the message
+      subject: `New message from ${nombre}`,
+      text: `Email: ${email}\n\nMessage:\n${mensaje}`
     };
 
+    // Send the email
     await transporter.sendMail(mailOptions);
 
+    // Render contact page with success message
     res.render('contact', {
-      titulo: 'Contáctanos',
-      mensaje: 'Mensaje enviado exitosamente.'
+      titulo: 'Contact Us',
+      mensaje: 'Message sent successfully.'
     });
   } catch (error) {
-    console.error('Error al enviar el correo:', error);
+    console.error('Error sending email:', error);
     res.render('contact', {
-      titulo: 'Contáctanos',
-      mensaje: 'Ocurrió un error al enviar el mensaje.'
+      titulo: 'Contact Us',
+      mensaje: 'An error occurred while sending the message.'
     });
   }
 });
 
-// Catálogo de productos (GET)
+// PRODUCT CATALOG (GET)
 router.get('/productos', async (req, res) => {
   try {
+    // Retrieve all products and populate category reference
     const productos = await Producto.find().populate('categoria').lean();
     res.render('productos/index', {
-      titulo: 'Catálogo de Productos',
+      titulo: 'Product Catalog',
       productos
     });
   } catch (error) {
-    console.error('Error al cargar productos:', error);
+    console.error('Error loading products:', error);
     res.redirect('/');
   }
 });
 
-// Detalle de producto por ID (GET)
+// PRODUCT DETAIL BY ID (GET)
 router.get('/productos/:id', async (req, res) => {
   try {
+    // Find product by ID and populate its category
     const producto = await Producto.findById(req.params.id)
       .populate('categoria')
       .lean();
@@ -85,14 +91,17 @@ router.get('/productos/:id', async (req, res) => {
     if (!producto) return res.redirect('/productos');
 
     res.render('productos/detalle', {
-      titulo: `Producto - ${producto.nombre}`,
+      titulo: `Product - ${producto.nombre}`,
       producto
     });
   } catch (error) {
-    console.error('Error al cargar detalle del producto:', error);
+    console.error('Error loading product detail:', error);
     res.redirect('/productos');
   }
 });
+
+module.exports = router;
+
 
 module.exports = router;
 
