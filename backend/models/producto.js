@@ -6,7 +6,7 @@ const productoSchema = new mongoose.Schema({
   precio: { type: Number, required: true },
   imagen: { type: String },
   creadoPor: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
-  categoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria' }, // ✅ relación con categoría
+  categoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria' }, 
   creadoEn: { type: Date, default: Date.now }
 });
 
