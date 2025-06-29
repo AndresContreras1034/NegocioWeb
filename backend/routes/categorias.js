@@ -3,90 +3,92 @@ const router = express.Router();
 const Categoria = require('../models/Categoria');
 const { verificarToken, soloAdmin } = require('../middlewares/authMiddleware');
 
-// Listar todas las categorías
+// LIST ALL CATEGORIES
 router.get('/', verificarToken, soloAdmin, async (req, res) => {
   try {
-    const categorias = await Categoria.find().lean();
+    const categorias = await Categoria.find().lean(); // Retrieve all categories
     res.render('categorias/lista', {
-      titulo: 'Categorías',
+      titulo: 'Categories',
       categorias
     });
   } catch (error) {
-    console.error('Error al listar categorías:', error);
+    console.error('Error listing categories:', error);
     res.redirect('/');
   }
 });
 
-// Mostrar formulario para crear nueva categoría
+// SHOW FORM TO CREATE NEW CATEGORY
 router.get('/nueva', verificarToken, soloAdmin, (req, res) => {
   res.render('categorias/nueva', {
-    titulo: 'Nueva Categoría',
+    titulo: 'New Category',
     error: null
   });
 });
 
-// Crear nueva categoría
+// CREATE NEW CATEGORY
 router.post('/nueva', verificarToken, soloAdmin, async (req, res) => {
   const { nombre } = req.body;
 
   try {
+    // Check if category already exists
     const existente = await Categoria.findOne({ nombre });
     if (existente) {
       return res.render('categorias/nueva', {
-        titulo: 'Nueva Categoría',
-        error: 'La categoría ya existe.'
+        titulo: 'New Category',
+        error: 'Category already exists.'
       });
     }
 
+    // Create and save the new category
     const categoria = new Categoria({ nombre });
     await categoria.save();
     res.redirect('/categorias');
   } catch (error) {
-    console.error('Error al crear categoría:', error);
+    console.error('Error creating category:', error);
     res.render('categorias/nueva', {
-      titulo: 'Nueva Categoría',
-      error: 'Error al crear la categoría.'
+      titulo: 'New Category',
+      error: 'Error creating the category.'
     });
   }
 });
 
-// Formulario para editar categoría
+// SHOW FORM TO EDIT A CATEGORY
 router.get('/editar/:id', verificarToken, soloAdmin, async (req, res) => {
   try {
-    const categoria = await Categoria.findById(req.params.id).lean();
+    const categoria = await Categoria.findById(req.params.id).lean(); // Find category by ID
     if (!categoria) return res.redirect('/categorias');
 
     res.render('categorias/editar', {
-      titulo: 'Editar Categoría',
+      titulo: 'Edit Category',
       categoria,
       error: null
     });
   } catch (error) {
-    console.error('Error al cargar categoría:', error);
+    console.error('Error loading category:', error);
     res.redirect('/categorias');
   }
 });
 
-// Procesar edición de categoría
+// PROCESS CATEGORY EDIT
 router.post('/editar/:id', verificarToken, soloAdmin, async (req, res) => {
   const { nombre } = req.body;
 
   try {
-    await Categoria.findByIdAndUpdate(req.params.id, { nombre });
+    await Categoria.findByIdAndUpdate(req.params.id, { nombre }); // Update category name
     res.redirect('/categorias');
   } catch (error) {
-    console.error('Error al editar categoría:', error);
+    console.error('Error editing category:', error);
     res.redirect('/categorias');
   }
 });
 
-// Eliminar categoría
+// DELETE CATEGORY
 router.post('/eliminar/:id', verificarToken, soloAdmin, async (req, res) => {
   try {
-    await Categoria.findByIdAndDelete(req.params.id);
+    await Categoria.findByIdAndDelete(req.params.id); // Delete category by ID
     res.redirect('/categorias');
   } catch (error) {
-    console.error('Error al eliminar categoría:', error);
+    console.error('Error deleting category:', error);
     res.redirect('/categorias');
   }
 });
