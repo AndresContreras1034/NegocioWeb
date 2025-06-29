@@ -3,38 +3,46 @@ const router = express.Router();
 const Usuario = require('../models/Usuario');
 const { verificarToken, soloAdmin } = require('../middlewares/authMiddleware');
 
-// Listar usuarios
+// LIST ALL USERS (ADMIN ONLY)
 router.get('/', verificarToken, soloAdmin, async (req, res) => {
-  const usuarios = await Usuario.find().lean();
-  res.render('usuarios/lista', { titulo: 'Gestión de Usuarios', usuarios });
+  const usuarios = await Usuario.find().lean(); // Get all users
+  res.render('usuarios/lista', { 
+    titulo: 'User Management', 
+    usuarios 
+  });
 });
 
-// Formulario para editar rol
+// SHOW FORM TO EDIT USER ROLE (ADMIN ONLY)
 router.get('/editar/:id', verificarToken, soloAdmin, async (req, res) => {
-  const usuario = await Usuario.findById(req.params.id).lean();
-  if (!usuario) return res.redirect('/usuarios');
-  res.render('usuarios/editar', { titulo: 'Editar Usuario', usuario });
+  const usuario = await Usuario.findById(req.params.id).lean(); // Find user by ID
+  if (!usuario) return res.redirect('/usuarios'); // If not found, redirect
+
+  res.render('usuarios/editar', { 
+    titulo: 'Edit User', 
+    usuario 
+  });
 });
 
-// Procesar edición
+// PROCESS USER ROLE EDIT (ADMIN ONLY)
 router.post('/editar/:id', verificarToken, soloAdmin, async (req, res) => {
-  const { rol } = req.body;
+  const { rol } = req.body; // Get new role from form
+
   try {
-    await Usuario.findByIdAndUpdate(req.params.id, { rol });
+    await Usuario.findByIdAndUpdate(req.params.id, { rol }); // Update user role
     res.redirect('/usuarios');
   } catch (error) {
-    console.error('Error al editar usuario:', error);
+    console.error('Error editing user:', error);
     res.redirect('/usuarios');
   }
 });
 
-// Eliminar usuario
+// DELETE USER (ADMIN ONLY)
 router.post('/eliminar/:id', verificarToken, soloAdmin, async (req, res) => {
   try {
-    await Usuario.findByIdAndDelete(req.params.id);
+    await Usuario.findByIdAndDelete(req.params.id); // Delete user by ID
     res.redirect('/usuarios');
   } catch (error) {
-    console.error('Error al eliminar usuario:', error);
+    console.error('Error deleting user:', error);
     res.redirect('/usuarios');
   }
 });
