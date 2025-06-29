@@ -5,21 +5,26 @@ const Producto = require('../models/Producto');
 const Categoria = require('../models/Categoria');
 const { verificarToken, soloAdmin } = require('../middlewares/authMiddleware');
 
+// ADMIN DASHBOARD
 router.get('/admin', verificarToken, soloAdmin, async (req, res) => {
   try {
+    // Count total users, products, and categories
     const totalUsuarios = await Usuario.countDocuments();
     const totalProductos = await Producto.countDocuments();
     const totalCategorias = await Categoria.countDocuments();
 
+    // Count users by role
     const adminCount = await Usuario.countDocuments({ rol: 'admin' });
     const clienteCount = await Usuario.countDocuments({ rol: 'cliente' });
 
+    // Calculate average product price using aggregation
     const promedioPrecio = await Producto.aggregate([
       { $group: { _id: null, promedio: { $avg: "$precio" } } }
     ]);
 
+    // Render the admin dashboard with all stats
     res.render('panel/admin', {
-      titulo: 'Panel de Administración',
+      titulo: 'Admin Dashboard',
       totalUsuarios,
       totalProductos,
       totalCategorias,
@@ -29,7 +34,7 @@ router.get('/admin', verificarToken, soloAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error en estadísticas:', error);
+    console.error('Error generating statistics:', error);
     res.redirect('/');
   }
 });
